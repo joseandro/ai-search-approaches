@@ -9,6 +9,7 @@ Clone this repository:
 Activate the environment you had created during Assignment 0:
 
 `conda activate ai_env`
+
 In case you used a different environment name, to list of all environments you have on your machine you can run `conda env list`.
 
 ## Overview
@@ -55,6 +56,8 @@ If you want to see how **_visualize_graph.py_** is used, take a look at the clas
 * Udacity, [Lesson 2: Search](https://classroom.udacity.com/courses/ud954/lessons/6375179396/concepts/68711451400923)
 * R&N slides on [Uninformed Search](https://www.cc.gatech.edu/~thad/6601-gradAI-fall2015/chapter03-clean.pdf)
 * [Informed Search](https://www.cc.gatech.edu/~thad/6601-gradAI-fall2015/chapter04a.pdf)
+* [Comparing BFS and DFS](https://cs.stanford.edu/people/abisee/tutorial/bfsdfs.html)
+* [A* Search](https://cs.stanford.edu/people/abisee/tutorial/astar.html)
 
 Links from Udacity, below the videos:
 * [Finding Optimal Solutions to Rubik's Cube Using Pattern Databases](https://www.cs.princeton.edu/courses/archive/fall06/cos402/papers/korfrubik.pdf)
@@ -62,6 +65,8 @@ Links from Udacity, below the videos:
 * [Reach for A∗: An Efficient Point-to-Point Shortest Path Algorithm](http://www.cc.gatech.edu/~thad/6601-gradAI-fall2015/02-search-01-Astart-ALT-Reach.pdf)
 * [Computing the Shortest Path: A∗ Search Meets Graph Theory](http://www.cc.gatech.edu/~thad/6601-gradAI-fall2015/02-search-Goldberg03tr.pdf)
 * [Reach-based Routing: A New Approach to Shortest Path Algorithms Optimized for Road Networks](http://www.cc.gatech.edu/~thad/6601-gradAI-fall2015/02-search-Gutman04siam.pdf)
+
+**_Please refrain from referring code/psuedocode from any other resource that is not provided here._**
 
 ## The Assignment
 
