@@ -74,8 +74,10 @@ class PriorityQueue(object):
 
     def __str__(self):
         """Priority Queue to string."""
-
-        return 'PQ:%s' % self.queue
+        str = ''
+        for i in self.queue:
+            str += f'[{i[0]}, {i[-1].state}] '
+        return 'PQ:%s ' % str
 
     def append(self, node):
         """
@@ -94,7 +96,7 @@ class PriorityQueue(object):
 
         self.entry_finder[node].append(entry)
         heapq.heappush(self.queue, entry)
-        
+
     def __contains__(self, key):
         """
         Containment Check operator for 'in'
@@ -106,7 +108,7 @@ class PriorityQueue(object):
             True if key is found in queue, False otherwise.
         """
 
-        return key in [n[-1] for n in self.queue]
+        return key in [n[-1].state for n in self.queue]
 
     def __eq__(self, other):
         """
@@ -147,6 +149,14 @@ class PriorityQueue(object):
         return self.queue[0]
 
 
+class Node:
+    def __init__(self, state, action, cost, parent):
+        self.state = state
+        self.action = action
+        self.cost = cost
+        self.parent = parent
+
+
 def breadth_first_search(graph, start, goal):
     """
     Warm-up exercise: Implement breadth-first-search.
@@ -161,9 +171,47 @@ def breadth_first_search(graph, start, goal):
     Returns:
         The best path as a list from the start and goal nodes (including both).
     """
+    if start == goal:
+        return []
 
-    # TODO: finish this function!
-    raise NotImplementedError
+    explored = []
+    tree = []
+    root = Node(state=start,
+                action=None,
+                cost=0,
+                parent=None)
+    frontier = PriorityQueue()
+    frontier.append((0, root))
+    best_cost = float("inf")
+    while True:
+        if frontier.size() == 0:
+            raise KeyError('frontier is empty, search failed')
+        element = frontier.pop()
+        weight = element[0]
+        node = element[-1]
+        S = node.state
+        explored.append(S)
+        if S == goal:
+            path = []
+            while node.parent is not None:
+                path.append(node.state)
+                node = node.parent
+            path.append(start)
+            path.reverse()
+            return path
+        w = weight + 1
+        if w < best_cost:
+            actions = sorted(graph[S])
+            for a in actions:
+                if a not in frontier and a not in explored:
+                        leaf = Node(state=a,
+                                    action=S+a,
+                                    cost=w,
+                                    parent=node)
+                        frontier.append((w, leaf))
+                        tree.append(leaf)
+                        if a == goal:
+                            best_cost = w
 
 
 def uniform_cost_search(graph, start, goal):
@@ -398,8 +446,8 @@ def load_data(graph, time_left):
 
     # nodes = graph.nodes()
     return None
- 
- 
+
+
 def haversine_dist_heuristic(graph, v, goal):
     """
     Note: This provided heuristic is for the Atlanta race.
@@ -413,12 +461,13 @@ def haversine_dist_heuristic(graph, v, goal):
         Haversine distance between `v` node and `goal` node
     """
 
-    #Load latitude and longitude coordinates in radians:
+    # Load latitude and longitude coordinates in radians:
     vLatLong = (math.radians(graph.nodes[v]["pos"][0]), math.radians(graph.nodes[v]["pos"][1]))
     goalLatLong = (math.radians(graph.nodes[goal]["pos"][0]), math.radians(graph.nodes[goal]["pos"][1]))
 
-    #Now we want to execute portions of the formula:
-    constOutFront = 2*6371 #Radius of Earth is 6,371 kilometers
-    term1InSqrt = (math.sin((goalLatLong[0]-vLatLong[0])/2))**2 #First term inside sqrt
-    term2InSqrt = math.cos(vLatLong[0])*math.cos(goalLatLong[0])*((math.sin((goalLatLong[1]-vLatLong[1])/2))**2) #Second term
-    return constOutFront*math.asin(math.sqrt(term1InSqrt+term2InSqrt)) #Straight application of formula
+    # Now we want to execute portions of the formula:
+    constOutFront = 2 * 6371  # Radius of Earth is 6,371 kilometers
+    term1InSqrt = (math.sin((goalLatLong[0] - vLatLong[0]) / 2)) ** 2  # First term inside sqrt
+    term2InSqrt = math.cos(vLatLong[0]) * math.cos(goalLatLong[0]) * (
+                (math.sin((goalLatLong[1] - vLatLong[1]) / 2)) ** 2)  # Second term
+    return constOutFront * math.asin(math.sqrt(term1InSqrt + term2InSqrt))  # Straight application of formula

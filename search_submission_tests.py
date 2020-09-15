@@ -13,36 +13,36 @@ from submission import PriorityQueue, a_star, bidirectional_a_star, \
 from visualize_graph import plot_search
 
 
-class TestPriorityQueue(unittest.TestCase):
-    """Test Priority Queue implementation"""
-
-    def test_append_and_pop(self):
-        """Test the append and pop functions"""
-        queue = PriorityQueue()
-        temp_list = []
-
-        for _ in range(10):
-            a = random.randint(0, 10000)
-            queue.append((a, 'a'))
-            temp_list.append(a)
-
-        temp_list = sorted(temp_list)
-
-        for item in temp_list:
-            popped = queue.pop()
-            self.assertEqual(item, popped[0])
-
-    def test_fifo_property(self):
-        "Test the fifo property for nodes with same priority"
-        queue = PriorityQueue()
-        temp_list = [(1,'b'), (1, 'c'), (1, 'a')]
-
-        for node in temp_list:
-            queue.append(node)
-        
-        for expected_node in temp_list:
-            actual_node = queue.pop()
-            self.assertEqual(expected_node[-1], actual_node[-1])
+# class TestPriorityQueue(unittest.TestCase):
+#     """Test Priority Queue implementation"""
+#
+#     def test_append_and_pop(self):
+#         """Test the append and pop functions"""
+#         queue = PriorityQueue()
+#         temp_list = []
+#
+#         for _ in range(10):
+#             a = random.randint(0, 10000)
+#             queue.append((a, 'a'))
+#             temp_list.append(a)
+#
+#         temp_list = sorted(temp_list)
+#
+#         for item in temp_list:
+#             popped = queue.pop()
+#             self.assertEqual(item, popped[0])
+#
+#     def test_fifo_property(self):
+#         "Test the fifo property for nodes with same priority"
+#         queue = PriorityQueue()
+#         temp_list = [(1,'b'), (1, 'c'), (1, 'a')]
+#
+#         for node in temp_list:
+#             queue.append(node)
+#
+#         for expected_node in temp_list:
+#             actual_node = queue.pop()
+#             self.assertEqual(expected_node[-1], actual_node[-1])
 
 class TestBasicSearch(unittest.TestCase):
     """Test the simple search algorithms: BFS, UCS, A*"""
