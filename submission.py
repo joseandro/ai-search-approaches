@@ -6,6 +6,7 @@ to this file that are not part of the classes that we want.
 """
 
 import heapq
+import itertools
 import os
 import pickle
 import math
@@ -31,8 +32,13 @@ class PriorityQueue(object):
 
     def __init__(self):
         """Initialize a new Priority Queue."""
+        # Heapq implementation was inspired by Python's documentation on Heapq:
+        # https://docs.python.org/3.5/library/heapq.html#priority-queue-implementation-notes
 
-        self.queue = []
+        self.entry_finder = {}  # mapping of tasks to entries
+        self.REMOVED = '<removed-task>'  # placeholder for a removed task
+        self.counter = itertools.count()  # unique sequence count
+        self.queue = []  # our queue
 
     def pop(self):
         """
@@ -41,9 +47,12 @@ class PriorityQueue(object):
         Returns:
             The node with the highest priority.
         """
-
-        # TODO: finish this function!
-        raise NotImplementedError
+        while self.queue:
+            priority, count, task = heapq.heappop(self.queue)
+            if task is not self.REMOVED:
+                self.entry_finder[(priority, task)].pop(0)
+                return [priority, task]
+        raise KeyError('pop from an empty priority queue')
 
     def remove(self, node):
         """
@@ -55,8 +64,8 @@ class PriorityQueue(object):
         Args:
             node (tuple): The node to remove from the queue.
         """
-
-        raise NotImplementedError
+        entry = self.entry_finder[node].pop(0)
+        entry[-1] = self.REMOVED
 
     def __iter__(self):
         """Queue iterator."""
@@ -75,9 +84,16 @@ class PriorityQueue(object):
         Args:
             node: Comparable Object to be added to the priority queue.
         """
+        priority = node[0]
+        task = node[1]
 
-        # TODO: finish this function!
-        raise NotImplementedError
+        count = next(self.counter)
+        entry = [priority, count, task]
+        if node not in self.entry_finder:
+            self.entry_finder[node] = []
+
+        self.entry_finder[node].append(entry)
+        heapq.heappush(self.queue, entry)
         
     def __contains__(self, key):
         """
