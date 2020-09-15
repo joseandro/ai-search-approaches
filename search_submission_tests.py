@@ -54,45 +54,8 @@ class TestBasicSearch(unittest.TestCase):
         self.romania = ExplorableGraph(romania)
         self.romania.reset_search()
 
-    def test_bfs(self):
-        """Test and visualize breadth-first search"""
-        start = 'a'
-        goal = 'u'
-
-        node_positions = {n: self.romania.nodes[n]['pos'] for n in
-                          self.romania.nodes.keys()}
-
-        self.romania.reset_search()
-        path = breadth_first_search(self.romania, start, goal)
-
-        self.draw_graph(self.romania, node_positions=node_positions,
-                        start=start, goal=goal, path=path,
-                        title='test_bfs blue=start, yellow=goal, green=explored')
-
-    def test_bfs_num_explored(self):
-        """Test BFS for correct path and number of explored nodes"""
-        start = 'a'
-        goal = 'u'
-
-        node_positions = {n: self.romania.nodes[n]['pos'] for n in
-                          self.romania.nodes.keys()}
-
-        self.romania.reset_search()
-        path = breadth_first_search(self.romania, start, goal)
-
-        self.assertEqual(path, ['a', 's', 'f', 'b', 'u'])   # Check for correct path
-
-        explored_nodes = sum(list(self.romania.explored_nodes.values()))
-        self.assertEqual(True, explored_nodes <= 10)    # Compare explored nodes to reference implementation
-
-    def test_bfs_empty_path(self):
-        start = "a"
-        goal = "a"
-        path = breadth_first_search(self.romania, start, goal)
-        self.assertEqual([], path)
-
-    # def test_ucs(self):
-    #     """TTest and visualize uniform-cost search"""
+    # def test_bfs(self):
+    #     """Test and visualize breadth-first search"""
     #     start = 'a'
     #     goal = 'u'
     #
@@ -100,14 +63,14 @@ class TestBasicSearch(unittest.TestCase):
     #                       self.romania.nodes.keys()}
     #
     #     self.romania.reset_search()
-    #     path = uniform_cost_search(self.romania, start, goal)
+    #     path = breadth_first_search(self.romania, start, goal)
     #
     #     self.draw_graph(self.romania, node_positions=node_positions,
     #                     start=start, goal=goal, path=path,
-    #                     title='test_ucs blue=start, yellow=goal, green=explored')
-
-    # def test_ucs_num_explored(self):
-    #     """Test UCS for correct path and number of explored nodes"""
+    #                     title='test_bfs blue=start, yellow=goal, green=explored')
+    #
+    # def test_bfs_num_explored(self):
+    #     """Test BFS for correct path and number of explored nodes"""
     #     start = 'a'
     #     goal = 'u'
     #
@@ -115,12 +78,49 @@ class TestBasicSearch(unittest.TestCase):
     #                       self.romania.nodes.keys()}
     #
     #     self.romania.reset_search()
-    #     path = uniform_cost_search(self.romania, start, goal)
+    #     path = breadth_first_search(self.romania, start, goal)
     #
-    #     self.assertEqual(path, ['a', 's', 'r', 'p', 'b', 'u'])   # Check for correct path
+    #     self.assertEqual(path, ['a', 's', 'f', 'b', 'u'])   # Check for correct path
     #
     #     explored_nodes = sum(list(self.romania.explored_nodes.values()))
-    #     self.assertEqual(explored_nodes, 13)    # Compare explored nodes to reference implementation
+    #     self.assertEqual(True, explored_nodes <= 10)    # Compare explored nodes to reference implementation
+    #
+    # def test_bfs_empty_path(self):
+    #     start = "a"
+    #     goal = "a"
+    #     path = breadth_first_search(self.romania, start, goal)
+    #     self.assertEqual([], path)
+
+    def test_ucs(self):
+        """TTest and visualize uniform-cost search"""
+        start = 'a'
+        goal = 'u'
+
+        node_positions = {n: self.romania.nodes[n]['pos'] for n in
+                          self.romania.nodes.keys()}
+
+        self.romania.reset_search()
+        path = uniform_cost_search(self.romania, start, goal)
+
+        self.draw_graph(self.romania, node_positions=node_positions,
+                        start=start, goal=goal, path=path,
+                        title='test_ucs blue=start, yellow=goal, green=explored')
+
+    def test_ucs_num_explored(self):
+        """Test UCS for correct path and number of explored nodes"""
+        start = 'a'
+        goal = 'u'
+
+        node_positions = {n: self.romania.nodes[n]['pos'] for n in
+                          self.romania.nodes.keys()}
+
+        self.romania.reset_search()
+        path = uniform_cost_search(self.romania, start, goal)
+
+        self.assertEqual(path, ['a', 's', 'r', 'p', 'b', 'u'])   # Check for correct path
+
+        explored_nodes = sum(list(self.romania.explored_nodes.values()))
+        self.assertEqual(explored_nodes, 13)    # Compare explored nodes to reference implementation
 
     # def test_a_star(self):
     #     """Test and visualize A* search"""

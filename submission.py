@@ -108,7 +108,7 @@ class PriorityQueue(object):
             True if key is found in queue, False otherwise.
         """
 
-        return key in [n[-1].state for n in self.queue]
+        return key in [n[-1] for n in self.queue]
 
     def __eq__(self, other):
         """
@@ -190,6 +190,9 @@ def breadth_first_search(graph, start, goal):
         weight = element[0]
         node = element[-1]
         S = node.state
+        if S in explored:
+            continue
+
         explored.append(S)
         if S == goal:
             path = []
@@ -203,11 +206,11 @@ def breadth_first_search(graph, start, goal):
         if w < best_cost:
             actions = sorted(graph[S])
             for a in actions:
-                if a not in frontier and a not in explored:
-                        leaf = Node(state=a,
-                                    action=S+a,
-                                    cost=w,
-                                    parent=node)
+                leaf = Node(state=a,
+                            action=S + a,
+                            cost=w,
+                            parent=node)
+                if leaf not in frontier and a not in explored:
                         frontier.append((w, leaf))
                         tree.append(leaf)
                         if a == goal:
@@ -229,8 +232,51 @@ def uniform_cost_search(graph, start, goal):
         The best path as a list from the start and goal nodes (including both).
     """
 
-    # TODO: finish this function!
-    raise NotImplementedError
+    if start == goal:
+        return []
+
+    explored = []
+    tree = []
+    root = Node(state=start,
+                action=None,
+                cost=0,
+                parent=None)
+    frontier = PriorityQueue()
+    frontier.append((0, root))
+    best_cost = float("inf")
+    while True:
+        if frontier.size() == 0:
+            raise KeyError('frontier is empty, search failed')
+        element = frontier.pop()
+        weight = element[0]
+        node = element[-1]
+        S = node.state
+        if S in explored:
+            continue
+        explored.append(S)
+        if S == goal:
+            path = []
+            while node.parent is not None:
+                path.append(node.state)
+                node = node.parent
+            path.append(start)
+            path.reverse()
+            return path
+
+        if weight < best_cost :
+            actions = graph[S]
+            for a in actions:
+                w = weight + graph.get_edge_weight(S, a)
+                if w < best_cost:
+                    leaf = Node(state=a,
+                                action=S + a,
+                                cost=w,
+                                parent=node)
+                    if leaf not in frontier and a not in explored:
+                        frontier.append((w, leaf))
+                        tree.append(leaf)
+                        if a == goal:
+                            best_cost = w
 
 
 def null_heuristic(graph, v, goal):
