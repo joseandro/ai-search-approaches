@@ -342,23 +342,23 @@ class SearchUnitTests(unittest.TestCase):
                 if src != dst: # we want path == [] if src == dst
                     self.assertTrue(len(path) == len(ref_path), msg="Path is too long. Real path: %s, your path: %s" % (ref_path, path))
 
-    # def test_ucs_romania(self):
-    #     """Test uniform cost search with Romania data."""
-    #
-    #     self.run_romania_data(self.reference_path, uniform_cost_search)
+    def test_ucs_romania(self):
+        """Test uniform cost search with Romania data."""
 
-    # def test_a_star_null_romania(self):
-    #     """Test A* search with Romania data and the Null heuristic."""
-    #
-    #     self.run_romania_data(self.reference_path, a_star,
-    #                           heuristic=null_heuristic)
-    #
-    # def test_a_star_euclidean_romania(self):
-    #     """Test A* search with Romania data and the Euclidean heuristic."""
-    #
-    #     self.run_romania_data(self.reference_path, a_star,
-    #                           heuristic=euclidean_dist_heuristic)
-    #
+        self.run_romania_data(self.reference_path, uniform_cost_search)
+
+    def test_a_star_null_romania(self):
+        """Test A* search with Romania data and the Null heuristic."""
+
+        self.run_romania_data(self.reference_path, a_star,
+                              heuristic=null_heuristic)
+
+    def test_a_star_euclidean_romania(self):
+        """Test A* search with Romania data and the Euclidean heuristic."""
+
+        self.run_romania_data(self.reference_path, a_star,
+                              heuristic=euclidean_dist_heuristic)
+
     # def test_bi_ucs_romania(self):
     #     """Test Bi-uniform cost search with Romania data."""
     #

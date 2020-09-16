@@ -309,9 +309,7 @@ def euclidean_dist_heuristic(graph, v, goal):
     Returns:
         Euclidean distance between `v` node and `goal` node
     """
-
-    # TODO: finish this function!
-    raise NotImplementedError
+    return math.sqrt(sum((px - qx) ** 2.0 for px, qx in zip(graph.nodes[v]['pos'],  graph.nodes[goal]['pos'])))
 
 
 def a_star(graph, start, goal, heuristic=euclidean_dist_heuristic):
@@ -331,8 +329,51 @@ def a_star(graph, start, goal, heuristic=euclidean_dist_heuristic):
         The best path as a list from the start and goal nodes (including both).
     """
 
-    # TODO: finish this function!
-    raise NotImplementedError
+    if start == goal:
+        return []
+
+    explored = []
+    tree = []
+    root = Node(state=start,
+                action=None,
+                cost=heuristic(graph, start, goal),
+                parent=None)
+    frontier = PriorityQueue()
+    frontier.append((0, root))
+    best_cost = float("inf")
+    while True:
+        if frontier.size() == 0:
+            raise KeyError('frontier is empty, search failed')
+        element = frontier.pop()
+        node = element[-1]
+        S = node.state
+        if S in explored:
+            continue
+        explored.append(S)
+        if S == goal:
+            path = []
+            while node.parent is not None:
+                path.append(node.state)
+                node = node.parent
+            path.append(start)
+            path.reverse()
+            return path
+        weight = element[0] - heuristic(graph, S, goal)
+        if weight < best_cost:
+            actions = graph[S]
+            for a in actions:
+                w = (weight + graph.get_edge_weight(S, a))
+                if w < best_cost:
+                    w += heuristic(graph, a, goal)
+                    leaf = Node(state=a,
+                                action=S + a,
+                                cost=w,
+                                parent=node)
+                    if leaf not in frontier and a not in explored:
+                        frontier.append((w, leaf))
+                        tree.append(leaf)
+                        if a == goal:
+                            best_cost = w - heuristic(graph, a, goal)
 
 
 def bidirectional_ucs(graph, start, goal):
@@ -418,8 +459,7 @@ def tridirectional_upgraded(graph, goals, heuristic=euclidean_dist_heuristic, la
 
 def return_your_name():
     """Return your name from this function"""
-    # TODO: finish this function
-    raise NotImplementedError
+    return "Joseandro Marques Oliveira Luiz"
 
 
 def compute_landmarks(graph):
