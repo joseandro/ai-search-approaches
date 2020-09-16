@@ -198,6 +198,8 @@ class SearchUnitTests(unittest.TestCase):
             ref_len, ref_path = self.reference_path(self.atlanta, src, dst)
             if abs(path_len - ref_len) > self.margin_of_error:
                 print (src, dst)
+            else:
+                print(path_len, ref_len, 'exceeds the MoE', self.margin_of_error)
 
             self.assertAlmostEqual(path_len, ref_len,
                                    delta=self.margin_of_error)
@@ -325,54 +327,54 @@ class SearchUnitTests(unittest.TestCase):
     #     self.same_node_tri_test(self.romania, tridirectional_upgraded,
     #                             heuristic=euclidean_dist_heuristic)
 
-    def test_bfs_romania(self):
-        """Test breadth first search with Romania data."""
-
-
-        keys = self.romania.nodes.keys()
-        pairs = itertools.permutations(keys, 2)
-        for src in keys:
-            for dst in keys:
-                self.romania.reset_search()
-                path = breadth_first_search(self.romania, src, dst)
-                explored_nodes = sum(list(self.romania.explored_nodes.values()))
-                ref_len, ref_path = self.reference_bfs_path(self.romania, src, dst)
-                self.assertTrue(is_valid(self.romania, path, src, dst),
-                     msg="path %s for start '%s' and goal '%s' is not valid" % (path, src, dst))
-                if src != dst: # we want path == [] if src == dst
-                    self.assertTrue(len(path) == len(ref_path), msg="Path is too long. Real path: %s, your path: %s" % (ref_path, path))
-
-    def test_ucs_romania(self):
-        """Test uniform cost search with Romania data."""
-
-        self.run_romania_data(self.reference_path, uniform_cost_search)
-
-    def test_a_star_null_romania(self):
-        """Test A* search with Romania data and the Null heuristic."""
-
-        self.run_romania_data(self.reference_path, a_star,
-                              heuristic=null_heuristic)
-
-    def test_a_star_euclidean_romania(self):
-        """Test A* search with Romania data and the Euclidean heuristic."""
-
-        self.run_romania_data(self.reference_path, a_star,
-                              heuristic=euclidean_dist_heuristic)
-
-    # def test_bi_ucs_romania(self):
-    #     """Test Bi-uniform cost search with Romania data."""
+    # def test_bfs_romania(self):
+    #     """Test breadth first search with Romania data."""
     #
-    #     self.run_romania_data(self.reference_path, bidirectional_ucs)
     #
-    # def test_bi_ucs_atlanta(self):
-    #     """
-    #     Test Bi-uniform cost search with Atlanta data.
+    #     keys = self.romania.nodes.keys()
+    #     pairs = itertools.permutations(keys, 2)
+    #     for src in keys:
+    #         for dst in keys:
+    #             self.romania.reset_search()
+    #             path = breadth_first_search(self.romania, src, dst)
+    #             explored_nodes = sum(list(self.romania.explored_nodes.values()))
+    #             ref_len, ref_path = self.reference_bfs_path(self.romania, src, dst)
+    #             self.assertTrue(is_valid(self.romania, path, src, dst),
+    #                  msg="path %s for start '%s' and goal '%s' is not valid" % (path, src, dst))
+    #             if src != dst: # we want path == [] if src == dst
+    #                 self.assertTrue(len(path) == len(ref_path), msg="Path is too long. Real path: %s, your path: %s" % (ref_path, path))
     #
-    #     To loop test forever, set test_count to -1
-    #     """
+    # def test_ucs_romania(self):
+    #     """Test uniform cost search with Romania data."""
     #
-    #     self.run_atlanta_data(bidirectional_ucs, test_count=10)
+    #     self.run_romania_data(self.reference_path, uniform_cost_search)
     #
+    # def test_a_star_null_romania(self):
+    #     """Test A* search with Romania data and the Null heuristic."""
+    #
+    #     self.run_romania_data(self.reference_path, a_star,
+    #                           heuristic=null_heuristic)
+    #
+    # def test_a_star_euclidean_romania(self):
+    #     """Test A* search with Romania data and the Euclidean heuristic."""
+    #
+    #     self.run_romania_data(self.reference_path, a_star,
+    #                           heuristic=euclidean_dist_heuristic)
+
+    def test_bi_ucs_romania(self):
+        """Test Bi-uniform cost search with Romania data."""
+
+        self.run_romania_data(self.reference_path, bidirectional_ucs)
+
+    def test_bi_ucs_atlanta(self):
+        """
+        Test Bi-uniform cost search with Atlanta data.
+
+        To loop test forever, set test_count to -1
+        """
+
+        self.run_atlanta_data(bidirectional_ucs, test_count=1)
+
     # def test_bi_a_star_null_romania(self):
     #     """Test Bi-A* search with Romania data and the Null heuristic."""
     #
