@@ -266,30 +266,30 @@ class SearchUnitTests(unittest.TestCase):
 
             self.assertFalse(path)
 
-    # def test_same_node_bi(self):
-    #     """
-    #     Test bidirectional search using the same start and end nodes.
-    #
-    #     Searches Tested:
-    #         breadth_first_search
-    #         uniform_cost_search
-    #         a_star, null_heuristic
-    #         a_star, euclidean_dist_heuristic
-    #         bidirectional_ucs
-    #         bidirectional_a_star, null_heuristic
-    #         bidirectional_a_star, euclidean_dist_heuristic
-    #     """
-    #
-    #     self.same_node_bi(self.romania, breadth_first_search)
-    #     self.same_node_bi(self.romania, uniform_cost_search)
-    #     self.same_node_bi(self.romania, a_star, heuristic=null_heuristic)
-    #     self.same_node_bi(self.romania, a_star,
-    #                       heuristic=euclidean_dist_heuristic)
-    #     self.same_node_bi(self.romania, bidirectional_ucs)
-    #     self.same_node_bi(self.romania, bidirectional_a_star,
-    #                       heuristic=null_heuristic)
-    #     self.same_node_bi(self.romania, bidirectional_a_star,
-    #                       heuristic=euclidean_dist_heuristic)
+    def test_same_node_bi(self):
+        """
+        Test bidirectional search using the same start and end nodes.
+
+        Searches Tested:
+            breadth_first_search
+            uniform_cost_search
+            a_star, null_heuristic
+            a_star, euclidean_dist_heuristic
+            bidirectional_ucs
+            bidirectional_a_star, null_heuristic
+            bidirectional_a_star, euclidean_dist_heuristic
+        """
+
+        self.same_node_bi(self.romania, breadth_first_search)
+        self.same_node_bi(self.romania, uniform_cost_search)
+        self.same_node_bi(self.romania, a_star, heuristic=null_heuristic)
+        self.same_node_bi(self.romania, a_star,
+                          heuristic=euclidean_dist_heuristic)
+        self.same_node_bi(self.romania, bidirectional_ucs)
+        self.same_node_bi(self.romania, bidirectional_a_star,
+                          heuristic=null_heuristic)
+        self.same_node_bi(self.romania, bidirectional_a_star,
+                          heuristic=euclidean_dist_heuristic)
 
     def same_node_tri_test(self, graph, method, test_count=10, **kwargs):
         """
@@ -361,64 +361,64 @@ class SearchUnitTests(unittest.TestCase):
     #     self.run_romania_data(self.reference_path, a_star,
     #                           heuristic=euclidean_dist_heuristic)
 
-    def test_bi_ucs_romania(self):
-        """Test Bi-uniform cost search with Romania data."""
+    # def test_bi_ucs_romania(self):
+    #     """Test Bi-uniform cost search with Romania data."""
+    #
+    #     self.run_romania_data(self.reference_path, bidirectional_ucs)
+    #
+    # def test_bi_ucs_atlanta(self):
+    #     """
+    #     Test Bi-uniform cost search with Atlanta data.
+    #
+    #     To loop test forever, set test_count to -1
+    #     """
+    #
+    #     self.run_atlanta_data(bidirectional_ucs, test_count=1)
 
-        self.run_romania_data(self.reference_path, bidirectional_ucs)
+    def test_bi_a_star_null_romania(self):
+        """Test Bi-A* search with Romania data and the Null heuristic."""
 
-    def test_bi_ucs_atlanta(self):
+        self.run_romania_data(self.reference_path, bidirectional_a_star,
+                              heuristic=null_heuristic)
+
+    def test_bi_a_star_null_atlanta(self):
         """
-        Test Bi-uniform cost search with Atlanta data.
+        Test Bi-A* search with Atlanta data and the Null heuristic.
 
         To loop test forever, set test_count to -1
         """
 
-        self.run_atlanta_data(bidirectional_ucs, test_count=1)
+        self.run_atlanta_data(bidirectional_a_star, heuristic=null_heuristic,
+                              test_count=10)
 
-    # def test_bi_a_star_null_romania(self):
-    #     """Test Bi-A* search with Romania data and the Null heuristic."""
-    #
-    #     self.run_romania_data(self.reference_path, bidirectional_a_star,
-    #                           heuristic=null_heuristic)
-    #
-    # def test_bi_a_star_null_atlanta(self):
-    #     """
-    #     Test Bi-A* search with Atlanta data and the Null heuristic.
-    #
-    #     To loop test forever, set test_count to -1
-    #     """
-    #
-    #     self.run_atlanta_data(bidirectional_a_star, heuristic=null_heuristic,
-    #                           test_count=10)
-    #
-    # def test_bi_a_star_euclidean_romania(self):
-    #     """Test Bi-A* search with Romania data and the Euclidean heuristic."""
-    #
-    #     self.run_romania_data(self.reference_path, bidirectional_a_star,
-    #                           heuristic=euclidean_dist_heuristic)
-    #
-    # def test_bi_a_star_euclidean_atlanta(self):
-    #     """
-    #     Test Bi-A* search with Atlanta data and the Euclidean heuristic.
-    #
-    #     To loop test forever, set test_count to -1
-    #     """
-    #
-    #     self.run_atlanta_data(bidirectional_a_star,
-    #                           heuristic=euclidean_dist_heuristic,
-    #                           test_count=10)
-    #
-    # def test_bi_a_star_haversine_atlanta(self):
-    #     """
-    #     Test Bi-A* search with Atlanta data and the Haversine heuristic.
-    #
-    #     To loop test forever, set test_count to -1
-    #     """
-    #
-    #     self.run_atlanta_data(bidirectional_a_star,
-    #                           heuristic=haversine_dist_heuristic,
-    #                           test_count=10)
-    #
+    def test_bi_a_star_euclidean_romania(self):
+        """Test Bi-A* search with Romania data and the Euclidean heuristic."""
+
+        self.run_romania_data(self.reference_path, bidirectional_a_star,
+                              heuristic=euclidean_dist_heuristic)
+
+    def test_bi_a_star_euclidean_atlanta(self):
+        """
+        Test Bi-A* search with Atlanta data and the Euclidean heuristic.
+
+        To loop test forever, set test_count to -1
+        """
+
+        self.run_atlanta_data(bidirectional_a_star,
+                              heuristic=euclidean_dist_heuristic,
+                              test_count=10)
+
+    def test_bi_a_star_haversine_atlanta(self):
+        """
+        Test Bi-A* search with Atlanta data and the Haversine heuristic.
+
+        To loop test forever, set test_count to -1
+        """
+
+        self.run_atlanta_data(bidirectional_a_star,
+                              heuristic=haversine_dist_heuristic,
+                              test_count=10)
+
     # def test_tri_ucs_romania(self):
     #     """Test Tri-UC search with Romania data."""
     #

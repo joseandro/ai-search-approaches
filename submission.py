@@ -531,8 +531,123 @@ def bidirectional_a_star(graph, start, goal,
         The best path as a list from the start and goal nodes (including both).
     """
 
-    # TODO: finish this function!
-    raise NotImplementedError
+    if start == goal:
+        return []
+
+    explored_agent_1 = []
+    explored_agent_2 = []
+    tree = []
+    beginning = Node(state=start,
+                     action=None,
+                     cost=0,
+                     parent=None)
+
+    frontier_agent_1 = PriorityQueue()
+    frontier_agent_1.append((0, beginning))
+
+    frontier_agent_2 = PriorityQueue()
+    end = Node(state=goal,
+               action=None,
+               cost=0,
+               parent=None)
+    frontier_agent_2.append((0, end))
+    best_cost = float("inf")
+    path = []
+    while True:
+        if frontier_agent_1.size() == 0 or frontier_agent_2.size() == 0:
+            print('Frontier is zero!', frontier_agent_1, frontier_agent_2)
+            return path
+
+        element = frontier_agent_1.pop()
+        node = element[-1]
+        S = node.state
+        if S in explored_agent_2:
+            return path
+
+        if S in explored_agent_1:
+            continue
+        weight = element[0] - heuristic(graph, S, goal)
+
+        explored_agent_1.append(S)
+        intersection = frontier_agent_2.get(S)
+        if intersection is not None:
+            if (best_cost >= (intersection.cost + node.cost)):
+                best_cost = intersection.cost + node.cost
+                path = []
+                aux_node = node
+                while aux_node.parent is not None:
+                    path.append(aux_node.state)
+                    aux_node = aux_node.parent
+                path.append(start)
+                path.reverse()
+                if intersection.parent is not None:
+                    intersection = intersection.parent
+                    while intersection.parent is not None:
+                        path.append(intersection.state)
+                        intersection = intersection.parent
+                    path.append(goal)
+
+        if weight < best_cost:
+            actions = graph[S]
+            for a in actions:
+                w = weight + graph.get_edge_weight(S, a)
+                if w < best_cost:
+                    w += heuristic(graph, a, goal)
+                    leaf = Node(state=a,
+                                action=S + a,
+                                cost=w,
+                                parent=node)
+                    if leaf not in frontier_agent_1 and a not in explored_agent_1:
+                        frontier_agent_1.append((w, leaf))
+                        tree.append(leaf)
+                        if a == goal:
+                            best_cost = w - heuristic(graph, a, goal)
+
+        element = frontier_agent_2.pop()
+        node = element[-1]
+        S = node.state
+        if S in explored_agent_1:
+            return path
+
+        if S in explored_agent_2:
+            continue
+
+        weight = element[0] - heuristic(graph, S, start)
+        explored_agent_2.append(S)
+
+        intersection = frontier_agent_1.get(S)
+        if intersection is not None:
+            if (best_cost >= (intersection.cost + node.cost)):
+                best_cost = intersection.cost + node.cost
+                path = []
+                aux_node = node
+                while intersection.parent is not None:
+                    path.append(intersection.state)
+                    intersection = intersection.parent
+                path.append(start)
+                path.reverse()
+                if aux_node.parent is not None:
+                    aux_node = aux_node.parent
+                    while aux_node.parent is not None:
+                        path.append(aux_node.state)
+                        aux_node = aux_node.parent
+                    path.append(goal)
+
+        if weight < best_cost:
+            actions = graph[S]
+            for a in actions:
+                w = weight + graph.get_edge_weight(S, a)
+                if w < best_cost:
+                    w += heuristic(graph, a, start)
+                    leaf = Node(state=a,
+                                action=S + a,
+                                cost=w,
+                                parent=node)
+                    if leaf not in frontier_agent_2 and a not in explored_agent_2:
+                        frontier_agent_2.append((w, leaf))
+                        tree.append(leaf)
+                        if a == goal:
+                            best_cost = w - heuristic(graph, a, start)
 
 
 def tridirectional_search(graph, goals):
