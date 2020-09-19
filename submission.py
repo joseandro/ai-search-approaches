@@ -521,6 +521,81 @@ def bidirectional_ucs(graph, start, goal):
                         if a == goal:
                             best_cost = w
 
+def bi_a_star_process_intersection(node, explored, frontier, best_cost):
+    S = node.state
+    cost = float('inf')
+    path = []
+    explored.append(node)
+    intersection = frontier.get(S)
+    if intersection is not None:
+        if best_cost >= (intersection.cost + node.cost):
+            cost = intersection.cost + node.cost
+            aux_node = node
+            while aux_node.parent is not None:
+                path.append(aux_node.state)
+                aux_node = aux_node.parent
+            path.append(aux_node.state)
+            path.reverse()
+            if intersection.parent is not None:
+                intersection = intersection.parent
+                while intersection.parent is not None:
+                    path.append(intersection.state)
+                    intersection = intersection.parent
+                path.append(intersection.state)
+    return cost, path
+
+def bi_a_star_expand_node(graph, tree, node, frontier, explored, goal, best_cost, heuristic):
+    weight = node.cost
+    cost = None
+    if weight < best_cost:
+        actions = graph[node.state]
+        for a in actions:
+            w = weight + graph.get_edge_weight(node.state, a)
+            if w < best_cost:
+                leaf = Node(state=a,
+                            action=node.state + a,
+                            cost=w,
+                            parent=node)
+                i = heuristic(graph, a, goal)
+                w += i
+                if leaf not in frontier and get_node_from_explored_set(node=leaf, explored=explored) is None:
+                    frontier.append((w, leaf))
+                    tree.append(leaf)
+                    if a == goal:
+                        cost = leaf.cost
+    return cost
+
+def get_node_from_explored_set(node, explored):
+    intersection = None
+    for n in explored:
+        if n.state == node.state:
+            intersection = n
+            break
+    return intersection
+
+def bi_a_star_get_path_from_intersection(node, explored):
+    intersection = get_node_from_explored_set(node, explored)
+    if intersection is None:
+        return float('inf'), []
+    path = []
+    cost = 0
+    aux_node = node
+    cost = aux_node.cost
+    while aux_node.parent is not None:
+        path.append(aux_node.state)
+        aux_node = aux_node.parent
+    path.append(aux_node.state)
+    path.reverse()
+
+    cost += intersection.cost
+    intersection = intersection.parent
+    if intersection is not None:
+        while intersection.parent is not None:
+            path.append(intersection.state)
+            intersection = intersection.parent
+        path.append(intersection.state)
+
+    return cost, path
 
 def bidirectional_a_star(graph, start, goal,
                          heuristic=euclidean_dist_heuristic):
@@ -570,91 +645,65 @@ def bidirectional_a_star(graph, start, goal,
         element = frontier_agent_1.pop()
         node = element[-1]
         S = node.state
-        if S in explored_agent_2:
+        cost, ret = bi_a_star_get_path_from_intersection(node=node,
+                                                   explored=explored_agent_2)
+        if best_cost > cost:
+            return ret
+        if len(ret) > 0:
             return path
 
         if S not in explored_agent_1:
-            weight = element[0] - heuristic(graph, S, goal)
-            explored_agent_1.append(S)
-            intersection = frontier_agent_2.get(S)
-            if intersection is not None:
-                if (best_cost >= (intersection.cost + node.cost)):
-                    best_cost = intersection.cost + node.cost
-                    path = []
-                    aux_node = node
-                    while aux_node.parent is not None:
-                        path.append(aux_node.state)
-                        aux_node = aux_node.parent
-                    path.append(start)
-                    path.reverse()
-                    if intersection.parent is not None:
-                        intersection = intersection.parent
-                        while intersection.parent is not None:
-                            path.append(intersection.state)
-                            intersection = intersection.parent
-                        path.append(goal)
+            cost, aux_p = bi_a_star_process_intersection(node=node,
+                                                         explored=explored_agent_1,
+                                                         frontier=frontier_agent_2,
+                                                         best_cost=best_cost)
+            if best_cost >= cost:
+                best_cost = cost
+                path = aux_p
 
-            if weight < best_cost:
-                actions = graph[S]
-                for a in actions:
-                    w = weight + graph.get_edge_weight(S, a)
-                    if w < best_cost:
-                        w += heuristic(graph, a, goal)
-                        leaf = Node(state=a,
-                                    action=S + a,
-                                    cost=w,
-                                    parent=node)
-                        if leaf not in frontier_agent_1 and a not in explored_agent_1:
-                            frontier_agent_1.append((w, leaf))
-                            tree.append(leaf)
-                            if a == goal:
-                                best_cost = w - heuristic(graph, a, goal)
+            cost = bi_a_star_expand_node(graph=graph,
+                                         tree=tree,
+                                         node=node,
+                                         goal=goal,
+                                         frontier=frontier_agent_1,
+                                         explored=explored_agent_1,
+                                         best_cost=best_cost,
+                                         heuristic=heuristic)
+            if cost is not None:
+                best_cost = cost
+
 
         element = frontier_agent_2.pop()
         node = element[-1]
         S = node.state
-        if S in explored_agent_1:
+        cost, ret = bi_a_star_get_path_from_intersection(node=node,
+                                                         explored=explored_agent_1)
+        if best_cost > cost:
+            ret.reverse()
+            return ret
+        if len(ret) > 0:
             return path
 
-        if S in explored_agent_2:
-            continue
+        if S not in explored_agent_2:
+            cost, aux_p = bi_a_star_process_intersection(node=node,
+                                                         explored=explored_agent_2,
+                                                         frontier=frontier_agent_1,
+                                                         best_cost=best_cost)
+            if best_cost >= cost:
+                best_cost = cost
+                aux_p.reverse()
+                path = aux_p
 
-        weight = element[0] - heuristic(graph, S, start)
-        explored_agent_2.append(S)
-
-        intersection = frontier_agent_1.get(S)
-        if intersection is not None:
-            if (best_cost >= (intersection.cost + node.cost)):
-                best_cost = intersection.cost + node.cost
-                path = []
-                aux_node = node
-                while intersection.parent is not None:
-                    path.append(intersection.state)
-                    intersection = intersection.parent
-                path.append(start)
-                path.reverse()
-                if aux_node.parent is not None:
-                    aux_node = aux_node.parent
-                    while aux_node.parent is not None:
-                        path.append(aux_node.state)
-                        aux_node = aux_node.parent
-                    path.append(goal)
-
-        if weight < best_cost:
-            actions = graph[S]
-            for a in actions:
-                w = weight + graph.get_edge_weight(S, a)
-                if w < best_cost:
-                    w += heuristic(graph, a, start)
-                    leaf = Node(state=a,
-                                action=S + a,
-                                cost=w,
-                                parent=node)
-                    if leaf not in frontier_agent_2 and a not in explored_agent_2:
-                        frontier_agent_2.append((w, leaf))
-                        tree.append(leaf)
-                        if a == goal:
-                            best_cost = w - heuristic(graph, a, start)
+            cost = bi_a_star_expand_node(graph=graph,
+                                         tree=tree,
+                                         node=node,
+                                         goal=start,
+                                         frontier=frontier_agent_2,
+                                         explored=explored_agent_2,
+                                         best_cost=best_cost,
+                                         heuristic=heuristic)
+            if cost is not None:
+                best_cost = cost
 
 
 def get_path(found_paths):
@@ -764,9 +813,8 @@ def inspect_explored_intersection(explored, node, path_id, found_paths):
             res.append(n)
     if len(res) > 0:
         intersection = res.pop()
-        if found_paths[path_id]['cost'] > intersection.cost + node.cost:
+        if found_paths[path_id]['cost'] >= intersection.cost + node.cost:
             found_paths[path_id]['cost'] = intersection.cost + node.cost
-
             path = []
             aux_node = node
             while aux_node.parent is not None:
@@ -1035,6 +1083,32 @@ def node_expansion_with_heuristic(graph, tree, node, frontier, explored, found_p
                     if a == goal.state:
                         found_paths[weight_id]['cost'] = w - heuristic(graph, a, goal.state)
 
+def improved_inspect_explored_intersection(explored, node, path_id, found_paths):
+    res = []
+    for n in explored:
+        if n.state == node.state:
+            res.append(n)
+    if len(res) > 0:
+        intersection = res.pop()
+        if found_paths[path_id]['cost'] >= intersection.cost + node.cost:
+            found_paths[path_id]['cost'] = intersection.cost + node.cost
+            path = []
+            aux_node = node
+            while aux_node.parent is not None:
+                path.append(aux_node.state)
+                aux_node = aux_node.parent
+            path.append(aux_node.state)
+            path.reverse()
+            if intersection.parent is not None:
+                intersection = intersection.parent
+            while intersection.parent is not None:
+                if intersection.state not in path:
+                    path.append(intersection.state)
+                intersection = intersection.parent
+            if intersection.state not in path:
+                path.append(intersection.state)
+            found_paths[path_id]['path'] = path
+            found_paths[path_id]['reached_goal'] = True
 
 def tridirectional_upgraded(graph, goals, heuristic=euclidean_dist_heuristic, landmarks=None):
     """
@@ -1122,11 +1196,11 @@ def tridirectional_upgraded(graph, goals, heuristic=euclidean_dist_heuristic, la
         # Agent 1 logic
         element = frontier_agent_1.pop()
         node = element[-1]
-        inspect_explored_intersection(explored=explored_agent_2,
+        improved_inspect_explored_intersection(explored=explored_agent_2,
                                       node=node,
                                       path_id='12',
                                       found_paths=found_paths)
-        inspect_explored_intersection(explored=explored_agent_3,
+        improved_inspect_explored_intersection(explored=explored_agent_3,
                                       node=node,
                                       path_id='13',
                                       found_paths=found_paths)
@@ -1160,11 +1234,11 @@ def tridirectional_upgraded(graph, goals, heuristic=euclidean_dist_heuristic, la
         # Agent 2 logic
         element = frontier_agent_2.pop()
         node = element[-1]
-        inspect_explored_intersection(explored=explored_agent_1,
+        improved_inspect_explored_intersection(explored=explored_agent_1,
                                       node=node,
                                       path_id='12',
                                       found_paths=found_paths)
-        inspect_explored_intersection(explored=explored_agent_3,
+        improved_inspect_explored_intersection(explored=explored_agent_3,
                                       node=node,
                                       path_id='23',
                                       found_paths=found_paths)
@@ -1199,11 +1273,11 @@ def tridirectional_upgraded(graph, goals, heuristic=euclidean_dist_heuristic, la
         # Agent 3 logic
         element = frontier_agent_3.pop()
         node = element[-1]
-        inspect_explored_intersection(explored=explored_agent_2,
+        improved_inspect_explored_intersection(explored=explored_agent_2,
                                       node=node,
                                       path_id='23',
                                       found_paths=found_paths)
-        inspect_explored_intersection(explored=explored_agent_1,
+        improved_inspect_explored_intersection(explored=explored_agent_1,
                                       node=node,
                                       path_id='13',
                                       found_paths=found_paths)
