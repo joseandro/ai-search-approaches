@@ -158,6 +158,7 @@ class SearchUnitTests(unittest.TestCase):
 
         keys = self.romania.nodes.keys()
         triplets = itertools.permutations(keys, 3)
+        # triplets = [('a', 'b', 'd')]
         for goals in triplets:
             self.romania.reset_search()
             path = method(self.romania, goals, **kwargs)

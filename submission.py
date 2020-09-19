@@ -135,6 +135,7 @@ class PriorityQueue(object):
         """
 
         return len(self.queue)
+
     def get(self, item):
         res = None
         for n in self.queue:
@@ -167,7 +168,7 @@ class Node:
         self.parent = parent
 
     def __str__(self):
-        return '{cost:'+str(self.cost)+', state:'+str(self.state)+'}'
+        return '{cost:' + str(self.cost) + ', state:' + str(self.state) + '}'
 
     def __contains__(self, key):
         return key == self.state
@@ -227,10 +228,10 @@ def breadth_first_search(graph, start, goal):
                             cost=w,
                             parent=node)
                 if leaf not in frontier and a not in explored:
-                        frontier.append((w, leaf))
-                        tree.append(leaf)
-                        if a == goal:
-                            best_cost = w
+                    frontier.append((w, leaf))
+                    tree.append(leaf)
+                    if a == goal:
+                        best_cost = w
 
 
 def uniform_cost_search(graph, start, goal):
@@ -279,7 +280,7 @@ def uniform_cost_search(graph, start, goal):
             path.reverse()
             return path
 
-        if weight < best_cost :
+        if weight < best_cost:
             actions = graph[S]
             for a in actions:
                 w = weight + graph.get_edge_weight(S, a)
@@ -325,7 +326,7 @@ def euclidean_dist_heuristic(graph, v, goal):
     Returns:
         Euclidean distance between `v` node and `goal` node
     """
-    return math.sqrt(sum((px - qx) ** 2.0 for px, qx in zip(graph.nodes[v]['pos'],  graph.nodes[goal]['pos'])))
+    return math.sqrt(sum((px - qx) ** 2.0 for px, qx in zip(graph.nodes[v]['pos'], graph.nodes[goal]['pos'])))
 
 
 def a_star(graph, start, goal, heuristic=euclidean_dist_heuristic):
@@ -458,7 +459,7 @@ def bidirectional_ucs(graph, start, goal):
                         intersection = intersection.parent
                     path.append(goal)
 
-        if weight < best_cost :
+        if weight < best_cost:
             actions = graph[S]
             for a in actions:
                 w = weight + graph.get_edge_weight(S, a)
@@ -502,7 +503,7 @@ def bidirectional_ucs(graph, start, goal):
                         aux_node = aux_node.parent
                     path.append(goal)
 
-        if weight < best_cost :
+        if weight < best_cost:
             actions = graph[S]
             for a in actions:
                 w = weight + graph.get_edge_weight(S, a)
@@ -516,6 +517,8 @@ def bidirectional_ucs(graph, start, goal):
                         tree.append(leaf)
                         if a == goal:
                             best_cost = w
+
+
 def bidirectional_a_star(graph, start, goal,
                          heuristic=euclidean_dist_heuristic):
     """
@@ -660,8 +663,8 @@ def get_path(found_paths):
     print('new a', path_a)
     print('new b', path_b)
     if path_a[-1] == path_b[0]:
-        print('first: ', path_a+path_b[1:])
-        return path_a+path_b[1:]
+        print('first: ', path_a + path_b[1:])
+        return path_a + path_b[1:]
 
     if path_b[-1] == path_a[0]:
         print('second: ', path_b + path_a[1:])
@@ -670,8 +673,8 @@ def get_path(found_paths):
     path_a_rev = path_a.copy()
     path_a_rev.reverse()
     if path_a_rev[-1] == path_b[0]:
-        print('third: ', path_a_rev+path_b[1:])
-        return path_a_rev+path_b[1:]
+        print('third: ', path_a_rev + path_b[1:])
+        return path_a_rev + path_b[1:]
 
     if path_b[-1] == path_a_rev[0]:
         print('fourth: ', path_b + path_a_rev[1:])
@@ -680,14 +683,15 @@ def get_path(found_paths):
     path_b_rev = path_b.copy()
     path_b_rev.reverse()
     if path_a[-1] == path_b_rev[0]:
-        print('fifth: ', path_a+path_b_rev[1:])
-        return path_a+path_b_rev[1:]
+        print('fifth: ', path_a + path_b_rev[1:])
+        return path_a + path_b_rev[1:]
 
     if path_b_rev[-1] == path_a[0]:
         print('sixth: ', path_b_rev + path_a[1:])
         return path_b_rev + path_a[1:]
 
     return []
+
 
 def process_node(frontier, node, id, start, goal, found_paths):
     if found_paths[id]['reached_goal'] is True:
@@ -721,6 +725,10 @@ def process_node(frontier, node, id, start, goal, found_paths):
 
 
 def node_expansion(graph, tree, node, frontier, explored, weight, found_paths, id_a, id_b, goal_a, goal_b):
+    if found_paths[id_a]['reached_goal'] is True and found_paths[id_b]['reached_goal'] is True:
+        print('path is already fully explored!')
+        return
+
     S = node.state
     if found_paths[id_a]['cost'] > found_paths[id_b]['cost']:
         max_cost = found_paths[id_a]['cost']
@@ -774,11 +782,13 @@ def inspect_explored_intersection(explored, node, path_id, found_paths):
             found_paths[path_id]['path'] = path
             found_paths[path_id]['reached_goal'] = True
 
+
 def is_state_unexplored(explored, state):
     for n in explored:
         if n.state == state:
             return False
     return True
+
 
 def tridirectional_search(graph, goals):
     """
@@ -846,223 +856,9 @@ def tridirectional_search(graph, goals):
     }
 
     while True:
-        if (found_paths['12']['reached_goal'] is True and found_paths['13']['reached_goal'] is True) or\
-           (found_paths['23']['reached_goal'] is True and found_paths['13']['reached_goal'] is True) or\
-           (found_paths['12']['reached_goal'] is True and found_paths['23']['reached_goal'] is True):
-            print('All best paths were found!')
-            return get_path(found_paths)
-
-        if frontier_agent_1.size() == 0 or \
-           frontier_agent_2.size() == 0 or \
-           frontier_agent_3.size() == 0:
-            print('Frontier is zero!', frontier_agent_1, frontier_agent_2, frontier_agent_3)
-            return get_path(found_paths)
-
-        # Agent 1 logic
-        element = frontier_agent_1.pop()
-        node = element[-1]
-        weight = element[0]
-        inspect_explored_intersection(explored=explored_agent_2,
-                                      node=node,
-                                      path_id='12',
-                                      found_paths=found_paths)
-
-        inspect_explored_intersection(explored=explored_agent_3,
-                                      node=node,
-                                      path_id='13',
-                                      found_paths=found_paths)
-
-        if is_state_unexplored(explored_agent_1, node.state):
-            explored_agent_1.append(node)
-            # Frontier processing
-            process_node(frontier=frontier_agent_2,
-                         node=node,
-                         id='12',
-                         start=start_agent_1,
-                         goal=start_agent_2,
-                         found_paths=found_paths)
-
-            process_node(frontier=frontier_agent_3,
-                         node=node,
-                         id='13',
-                         start=start_agent_1,
-                         goal=start_agent_3,
-                         found_paths=found_paths)
-
-            # Node expansion
-            node_expansion(graph=graph,
-                           tree=tree,
-                           node=node,
-                           frontier=frontier_agent_1,
-                           explored=explored_agent_1,
-                           weight=weight,
-                           found_paths=found_paths,
-                           id_a='12',
-                           id_b='13',
-                           goal_a=start_node_agent_2,
-                           goal_b=start_node_agent_3)
-
-        # Agent 2 logic
-        element = frontier_agent_2.pop()
-        node = element[-1]
-        weight = element[0]
-        inspect_explored_intersection(explored=explored_agent_1,
-                                      node=node,
-                                      path_id='12',
-                                      found_paths=found_paths)
-
-        inspect_explored_intersection(explored=explored_agent_3,
-                                      node=node,
-                                      path_id='23',
-                                      found_paths=found_paths)
-
-        if is_state_unexplored(explored_agent_2, node.state):
-            explored_agent_2.append(node)
-            # Frontier processing
-            process_node(frontier=frontier_agent_1,
-                         node=node,
-                         id='12',
-                         start=start_agent_2,
-                         goal=start_agent_1,
-                         found_paths=found_paths)
-
-            process_node(frontier=frontier_agent_3,
-                         node=node,
-                         id='23',
-                         start=start_agent_2,
-                         goal=start_agent_3,
-                         found_paths=found_paths)
-
-            # Node expansion
-            node_expansion(graph=graph,
-                           tree=tree,
-                           node=node,
-                           frontier=frontier_agent_2,
-                           explored=explored_agent_2,
-                           weight=weight,
-                           found_paths=found_paths,
-                           id_a='12',
-                           id_b='23',
-                           goal_a=start_node_agent_1,
-                           goal_b=start_node_agent_3)
-
-        # Agent 3 logic
-        element = frontier_agent_3.pop()
-        node = element[-1]
-        weight = element[0]
-        inspect_explored_intersection(explored=explored_agent_2,
-                                      node=node,
-                                      path_id='23',
-                                      found_paths=found_paths)
-
-        inspect_explored_intersection(explored=explored_agent_1,
-                                      node=node,
-                                      path_id='13',
-                                      found_paths=found_paths)
-
-        if is_state_unexplored(explored_agent_3, node.state):
-            explored_agent_3.append(node)
-            # Frontier processing
-            process_node(frontier=frontier_agent_2,
-                         node=node,
-                         id='23',
-                         start=start_agent_3,
-                         goal=start_agent_2,
-                         found_paths=found_paths)
-
-            process_node(frontier=frontier_agent_1,
-                         node=node,
-                         id='13',
-                         start=start_agent_3,
-                         goal=start_agent_1,
-                         found_paths=found_paths)
-
-            # Node expansion
-            node_expansion(graph=graph,
-                           tree=tree,
-                           node=node,
-                           frontier=frontier_agent_3,
-                           explored=explored_agent_3,
-                           weight=weight,
-                           found_paths=found_paths,
-                           id_a='23',
-                           id_b='13',
-                           goal_a=start_node_agent_2,
-                           goal_b=start_node_agent_1)
-
-def tridirectional_upgraded(graph, goals, heuristic=euclidean_dist_heuristic, landmarks=None):
-    """
-    Exercise 4: Upgraded Tridirectional Search
-
-    See README.MD for exercise description.
-
-    Args:
-        graph (ExplorableGraph): Undirected graph to search.
-        goals (list): Key values for the 3 goals
-        heuristic: Function to determine distance heuristic.
-            Default: euclidean_dist_heuristic.
-        landmarks: Iterable containing landmarks pre-computed in compute_landmarks()
-            Default: None
-
-    Returns:
-        The best path as a list from one of the goal nodes (including both of
-        the other goal nodes).
-    """
-    print('Goals given: ', goals)
-    if goals[0] == goals[1] and goals[1] == goals[2]:
-        return []
-
-    explored_agent_1 = []
-    explored_agent_2 = []
-    explored_agent_3 = []
-    start_agent_1 = goals[0]
-    start_agent_2 = goals[1]
-    start_agent_3 = goals[2]
-    tree = []
-    start_node_agent_1 = Node(state=start_agent_1,
-                              action=None,
-                              cost=0,
-                              parent=None)
-
-    frontier_agent_1 = PriorityQueue()
-    frontier_agent_1.append((0, start_node_agent_1))
-
-    frontier_agent_2 = PriorityQueue()
-    start_node_agent_2 = Node(state=start_agent_2,
-                              action=None,
-                              cost=0,
-                              parent=None)
-    frontier_agent_2.append((0, start_node_agent_2))
-
-    frontier_agent_3 = PriorityQueue()
-    start_node_agent_3 = Node(state=start_agent_3,
-                              action=None,
-                              cost=0,
-                              parent=None)
-    frontier_agent_3.append((0, start_node_agent_3))
-
-    found_paths = {
-        '12': {
-            'path': [],
-            'cost': float('inf'),
-            'reached_goal': False
-        },
-        '13': {
-            'path': [],
-            'cost': float('inf'),
-            'reached_goal': False
-        },
-        '23': {
-            'path': [],
-            'cost': float('inf'),
-            'reached_goal': False
-        }
-    }
-
-    while True:
         if (found_paths['12']['reached_goal'] is True and found_paths['13']['reached_goal'] is True) or \
-                (found_paths['23']['reached_goal'] is True and found_paths['13']['reached_goal'] is True) or \
-                (found_paths['12']['reached_goal'] is True and found_paths['23']['reached_goal'] is True):
+           (found_paths['23']['reached_goal'] is True and found_paths['13']['reached_goal'] is True) or \
+           (found_paths['12']['reached_goal'] is True and found_paths['23']['reached_goal'] is True):
             print('All best paths were found!')
             return get_path(found_paths)
 
@@ -1205,6 +1001,234 @@ def tridirectional_upgraded(graph, goals, heuristic=euclidean_dist_heuristic, la
                            goal_b=start_node_agent_1)
 
 
+def node_expansion_with_heuristic(graph, tree, node, frontier, explored, found_paths, id_a, id_b, goal_a,
+                                  goal_b, heuristic):
+    if found_paths[id_a]['reached_goal'] is True and found_paths[id_b]['reached_goal'] is True:
+        print('path is already fully explored! ', found_paths[id_a]['path'], found_paths[id_b]['path'])
+        return
+
+    S = node.state
+    actions = graph[S]
+    for a in actions:
+        w = node.cost + graph.get_edge_weight(S, a)
+        for weight_id in [id_a, id_b]:
+            if weight_id == id_a:
+                goal = goal_a
+            else:
+                goal = goal_b
+
+            if w < found_paths[weight_id]['cost']:
+                leaf = Node(state=a,
+                            action=S + a,
+                            cost=w,
+                            parent=node)
+                if leaf not in frontier and leaf not in explored:
+                    w += heuristic(graph, a, goal.state)
+                    frontier.append((w, leaf))
+                    tree.append(leaf)
+                    if a == goal.state:
+                        found_paths[weight_id]['cost'] = w - heuristic(graph, a, goal.state)
+
+
+def tridirectional_upgraded(graph, goals, heuristic=euclidean_dist_heuristic, landmarks=None):
+    """
+    Exercise 4: Upgraded Tridirectional Search
+
+    See README.MD for exercise description.
+
+    Args:
+        graph (ExplorableGraph): Undirected graph to search.
+        goals (list): Key values for the 3 goals
+        heuristic: Function to determine distance heuristic.
+            Default: euclidean_dist_heuristic.
+        landmarks: Iterable containing landmarks pre-computed in compute_landmarks()
+            Default: None
+
+    Returns:
+        The best path as a list from one of the goal nodes (including both of
+        the other goal nodes).
+    """
+    print('Goals given: ', goals)
+    if goals[0] == goals[1] and goals[1] == goals[2]:
+        return []
+
+    explored_agent_1 = []
+    explored_agent_2 = []
+    explored_agent_3 = []
+    start_agent_1 = goals[0]
+    start_agent_2 = goals[1]
+    start_agent_3 = goals[2]
+    tree = []
+    start_node_agent_1 = Node(state=start_agent_1,
+                              action=None,
+                              cost=0,
+                              parent=None)
+
+    frontier_agent_1 = PriorityQueue()
+    frontier_agent_1.append((0, start_node_agent_1))
+
+    frontier_agent_2 = PriorityQueue()
+    start_node_agent_2 = Node(state=start_agent_2,
+                              action=None,
+                              cost=0,
+                              parent=None)
+    frontier_agent_2.append((0, start_node_agent_2))
+
+    frontier_agent_3 = PriorityQueue()
+    start_node_agent_3 = Node(state=start_agent_3,
+                              action=None,
+                              cost=0,
+                              parent=None)
+    frontier_agent_3.append((0, start_node_agent_3))
+
+    found_paths = {
+        '12': {
+            'path': [],
+            'cost': float('inf'),
+            'reached_goal': False
+        },
+        '13': {
+            'path': [],
+            'cost': float('inf'),
+            'reached_goal': False
+        },
+        '23': {
+            'path': [],
+            'cost': float('inf'),
+            'reached_goal': False
+        }
+    }
+
+    while True:
+        if (found_paths['12']['reached_goal'] is True and found_paths['13']['reached_goal'] is True) or \
+                (found_paths['23']['reached_goal'] is True and found_paths['13']['reached_goal'] is True) or \
+                (found_paths['12']['reached_goal'] is True and found_paths['23']['reached_goal'] is True):
+            print('All best paths were found!')
+            return get_path(found_paths)
+
+        if frontier_agent_1.size() == 0 or \
+                frontier_agent_2.size() == 0 or \
+                frontier_agent_3.size() == 0:
+            print('Frontier is zero!', frontier_agent_1, frontier_agent_2, frontier_agent_3)
+            return get_path(found_paths)
+
+        # Agent 1 logic
+        element = frontier_agent_1.pop()
+        node = element[-1]
+        inspect_explored_intersection(explored=explored_agent_2,
+                                      node=node,
+                                      path_id='12',
+                                      found_paths=found_paths)
+        inspect_explored_intersection(explored=explored_agent_3,
+                                      node=node,
+                                      path_id='13',
+                                      found_paths=found_paths)
+        if is_state_unexplored(explored_agent_1, node.state):
+            explored_agent_1.append(node)
+            # Frontier processing
+            process_node(frontier=frontier_agent_2,
+                         node=node,
+                         id='12',
+                         start=start_agent_1,
+                         goal=start_agent_2,
+                         found_paths=found_paths)
+            process_node(frontier=frontier_agent_3,
+                         node=node,
+                         id='13',
+                         start=start_agent_1,
+                         goal=start_agent_3,
+                         found_paths=found_paths)
+            # Node expansion
+            node_expansion_with_heuristic(graph=graph,
+                                          tree=tree,
+                                          node=node,
+                                          frontier=frontier_agent_1,
+                                          explored=explored_agent_1,
+                                          found_paths=found_paths,
+                                          id_a='12',
+                                          id_b='13',
+                                          goal_a=start_node_agent_2,
+                                          goal_b=start_node_agent_3,
+                                          heuristic=heuristic)
+        # Agent 2 logic
+        element = frontier_agent_2.pop()
+        node = element[-1]
+        inspect_explored_intersection(explored=explored_agent_1,
+                                      node=node,
+                                      path_id='12',
+                                      found_paths=found_paths)
+        inspect_explored_intersection(explored=explored_agent_3,
+                                      node=node,
+                                      path_id='23',
+                                      found_paths=found_paths)
+        if is_state_unexplored(explored_agent_2, node.state):
+            explored_agent_2.append(node)
+            # Frontier processing
+            process_node(frontier=frontier_agent_1,
+                         node=node,
+                         id='12',
+                         start=start_agent_2,
+                         goal=start_agent_1,
+                         found_paths=found_paths)
+            process_node(frontier=frontier_agent_3,
+                         node=node,
+                         id='23',
+                         start=start_agent_2,
+                         goal=start_agent_3,
+                         found_paths=found_paths)
+            # Node expansion
+            node_expansion_with_heuristic(graph=graph,
+                                          tree=tree,
+                                          node=node,
+                                          frontier=frontier_agent_2,
+                                          explored=explored_agent_2,
+                                          found_paths=found_paths,
+                                          id_a='12',
+                                          id_b='23',
+                                          goal_a=start_node_agent_1,
+                                          goal_b=start_node_agent_3,
+                                          heuristic=heuristic)
+
+        # Agent 3 logic
+        element = frontier_agent_3.pop()
+        node = element[-1]
+        inspect_explored_intersection(explored=explored_agent_2,
+                                      node=node,
+                                      path_id='23',
+                                      found_paths=found_paths)
+        inspect_explored_intersection(explored=explored_agent_1,
+                                      node=node,
+                                      path_id='13',
+                                      found_paths=found_paths)
+        if is_state_unexplored(explored_agent_3, node.state):
+            explored_agent_3.append(node)
+            # Frontier processing
+            process_node(frontier=frontier_agent_2,
+                         node=node,
+                         id='23',
+                         start=start_agent_3,
+                         goal=start_agent_2,
+                         found_paths=found_paths)
+            process_node(frontier=frontier_agent_1,
+                         node=node,
+                         id='13',
+                         start=start_agent_3,
+                         goal=start_agent_1,
+                         found_paths=found_paths)
+            # Node expansion
+            node_expansion_with_heuristic(graph=graph,
+                                          tree=tree,
+                                          node=node,
+                                          frontier=frontier_agent_3,
+                                          explored=explored_agent_3,
+                                          found_paths=found_paths,
+                                          id_a='23',
+                                          id_b='13',
+                                          goal_a=start_node_agent_2,
+                                          goal_b=start_node_agent_1,
+                                          heuristic=heuristic)
+
+
 def return_your_name():
     """Return your name from this function"""
     return "Joseandro Marques Oliveira Luiz"
@@ -1303,5 +1327,5 @@ def haversine_dist_heuristic(graph, v, goal):
     constOutFront = 2 * 6371  # Radius of Earth is 6,371 kilometers
     term1InSqrt = (math.sin((goalLatLong[0] - vLatLong[0]) / 2)) ** 2  # First term inside sqrt
     term2InSqrt = math.cos(vLatLong[0]) * math.cos(goalLatLong[0]) * (
-                (math.sin((goalLatLong[1] - vLatLong[1]) / 2)) ** 2)  # Second term
+            (math.sin((goalLatLong[1] - vLatLong[1]) / 2)) ** 2)  # Second term
     return constOutFront * math.asin(math.sqrt(term1InSqrt + term2InSqrt))  # Straight application of formula
