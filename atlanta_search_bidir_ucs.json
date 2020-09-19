@@ -23,11 +23,11 @@
 "properties": {"marker-color": "#000000"}
 }
 ,{ "type" : "Feature",
-"geometry" : {"type": "Point", "coordinates": [-84.390166,33.830072]},
+"geometry" : {"type": "Point", "coordinates": [-84.390683,33.829235]},
 "properties": {"marker-color": "#000000"}
 }
 ,{ "type" : "Feature",
-"geometry" : {"type": "Point", "coordinates": [-84.390683,33.829235]},
+"geometry" : {"type": "Point", "coordinates": [-84.390166,33.830072]},
 "properties": {"marker-color": "#000000"}
 }
 ]

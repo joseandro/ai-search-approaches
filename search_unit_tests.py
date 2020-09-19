@@ -158,7 +158,7 @@ class SearchUnitTests(unittest.TestCase):
 
         keys = self.romania.nodes.keys()
         triplets = itertools.permutations(keys, 3)
-        # triplets = [('a', 'b', 'd')]
+        # triplets = [('a', 'b', 'n')]
         for goals in triplets:
             self.romania.reset_search()
             path = method(self.romania, goals, **kwargs)
@@ -451,13 +451,13 @@ class SearchUnitTests(unittest.TestCase):
     #     self.run_atlanta_tri(tridirectional_upgraded, test_count=1,
     #                          heuristic=null_heuristic)
 
-    def test_tri_upgraded_euclidean_romania(self):
-        """
-        Test upgraded tri search with Romania data and the Euclidean heuristic.
-        """
-
-        self.run_romania_tri(tridirectional_upgraded,
-                             heuristic=euclidean_dist_heuristic)
+    # def test_tri_upgraded_euclidean_romania(self):
+    #     """
+    #     Test upgraded tri search with Romania data and the Euclidean heuristic.
+    #     """
+    #
+    #     self.run_romania_tri(tridirectional_upgraded,
+    #                          heuristic=euclidean_dist_heuristic)
 
     # def test_tri_upgraded_euclidean_atlanta(self):
     #     """
@@ -469,15 +469,15 @@ class SearchUnitTests(unittest.TestCase):
     #     self.run_atlanta_tri(tridirectional_upgraded, test_count=10,
     #                          heuristic=euclidean_dist_heuristic)
     #
-    # def test_tri_upgraded_haversine_atlanta(self):
-    #     """
-    #     Test upgraded tri search with Atlanta data and the Haversine heuristic.
-    #
-    #     To loop test forever, set test_count to -1
-    #     """
-    #
-    #     self.run_atlanta_tri(tridirectional_upgraded, test_count=10,
-    #                          heuristic=haversine_dist_heuristic)
+    def test_tri_upgraded_haversine_atlanta(self):
+        """
+        Test upgraded tri search with Atlanta data and the Haversine heuristic.
+
+        To loop test forever, set test_count to -1
+        """
+
+        self.run_atlanta_tri(tridirectional_upgraded, test_count=10,
+                             heuristic=haversine_dist_heuristic)
 
 if __name__ == '__main__':
     unittest.main()

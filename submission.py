@@ -113,6 +113,9 @@ class PriorityQueue(object):
 
         return key in [n[-1] for n in self.queue]
 
+    def contains_state(self, key):
+        return key.state in [n[-1].state for n in self.queue]
+
     def __eq__(self, other):
         """
         Compare this Priority Queue with another Priority Queue.
@@ -761,7 +764,7 @@ def inspect_explored_intersection(explored, node, path_id, found_paths):
             res.append(n)
     if len(res) > 0:
         intersection = res.pop()
-        if found_paths[path_id]['cost'] >= intersection.cost + node.cost:
+        if found_paths[path_id]['cost'] > intersection.cost + node.cost:
             found_paths[path_id]['cost'] = intersection.cost + node.cost
 
             path = []
@@ -1010,8 +1013,11 @@ def node_expansion_with_heuristic(graph, tree, node, frontier, explored, found_p
     S = node.state
     actions = graph[S]
     for a in actions:
-        w = node.cost + graph.get_edge_weight(S, a)
         for weight_id in [id_a, id_b]:
+            w = node.cost + graph.get_edge_weight(S, a)
+            if found_paths[weight_id]['reached_goal'] is True:
+                continue
+
             if weight_id == id_a:
                 goal = goal_a
             else:
@@ -1022,7 +1028,7 @@ def node_expansion_with_heuristic(graph, tree, node, frontier, explored, found_p
                             action=S + a,
                             cost=w,
                             parent=node)
-                if leaf not in frontier and leaf not in explored:
+                if leaf not in frontier and leaf not in explored:# is_state_unexplored(explored, a):
                     w += heuristic(graph, a, goal.state)
                     frontier.append((w, leaf))
                     tree.append(leaf)
@@ -1103,6 +1109,7 @@ def tridirectional_upgraded(graph, goals, heuristic=euclidean_dist_heuristic, la
         if (found_paths['12']['reached_goal'] is True and found_paths['13']['reached_goal'] is True) or \
                 (found_paths['23']['reached_goal'] is True and found_paths['13']['reached_goal'] is True) or \
                 (found_paths['12']['reached_goal'] is True and found_paths['23']['reached_goal'] is True):
+        # if (found_paths['12']['reached_goal'] is True and found_paths['13']['reached_goal'] is True and found_paths['23']['reached_goal'] is True):
             print('All best paths were found!')
             return get_path(found_paths)
 
